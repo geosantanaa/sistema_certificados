@@ -1,16 +1,8 @@
-package com.projeto.model.dto;
+package com.projeto.certificado.models.dto;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.projeto.certificado.models.Certificado;
 import com.projeto.certificado.models.Curso;
+import com.projeto.certificado.models.Turma;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -27,5 +19,15 @@ public class AlunoResponseDto {
     private Turma turma;
     private Curso curso;
     private Certificado certificado;
+
+    public AlunoResponseDto(Long id, String nome, String email, Turma turma, Curso curso, Certificado certificado) {
+        id = this.id;
+        nome = this.nome;
+        email = this.email;
+        turma = this.turma;
+        curso = this.curso;
+        certificado = this.certificado;
+
+    }
 	
 }

@@ -1,4 +1,4 @@
-package com.example.curiculos.service;
+package com.projeto.certificado.services;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,10 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.example.curiculos.model.Curriculo;
-import com.example.curiculos.model.dto.CurriculoEntradaDto;
-import com.example.curiculos.model.dto.CurriculoSaidaDto;
-import com.example.curiculos.repository.CurriculoRepository;
 import com.projeto.certificado.models.Admin;
 import com.projeto.certificado.models.dto.AdminRequestDto;
 import com.projeto.certificado.models.dto.AdminResponseDto;

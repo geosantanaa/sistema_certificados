@@ -1,4 +1,4 @@
-package com.example.curiculos.service;
+package com.projeto.certificado.services;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,16 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.example.curiculos.model.Curriculo;
-import com.example.curiculos.model.dto.CurriculoEntradaDto;
-import com.example.curiculos.model.dto.CurriculoSaidaDto;
-import com.example.curiculos.repository.CurriculoRepository;
-import com.projeto.certificado.models.Endereco;
 import com.projeto.certificado.models.Endereco;
 import com.projeto.certificado.models.dto.EnderecoRequestDto;
 import com.projeto.certificado.models.dto.EnderecoResponseDto;
-import com.projeto.certificado.models.dto.EnderecoRequestDto;
-import com.projeto.certificado.repositorys.EnderecoRepository;
 import com.projeto.certificado.repositorys.EnderecoRepository;
 
 @org.springframework.stereotype.Service
@@ -27,27 +20,29 @@ public class EnderecoService {
 	private EnderecoRepository repository;
 
 
-	public ResponseEntity<EnderecoResponseDto> criar(EnderecoRequestDto categoriaEntrada) {
-        Endereco categoria = new Endereco(categoriaEntrada.getNome(), categoriaEntrada.getDescricao());
-        repository.save(categoria);
-        return new ResponseEntity<>(mapToDto(categoria), HttpStatus.CREATED);
+	public ResponseEntity<EnderecoResponseDto> criar(EnderecoRequestDto enderecoEntrada) {
+        Endereco endereco = new Endereco(enderecoEntrada.getLogradouro(), enderecoEntrada.getNumero(), enderecoEntrada.getBairro(), enderecoEntrada.getCidade());
+        repository.save(endereco);
+        return new ResponseEntity<>(mapToDto(endereco), HttpStatus.CREATED);
     }
 
-	public ResponseEntity<Boolean> alterar(Long id, EnderecoRequestDto categoriaEntrada) {
+	public ResponseEntity<Boolean> alterar(Long id, EnderecoRequestDto enderecoEntrada) {
         Optional<Endereco> buscandoEndereco = repository.findById(id);
         if (buscandoEndereco.isPresent()) {
-            Endereco categoria = buscandoEndereco.get();
-            Endereco.setNome(categoriaEntrada.getNome());
-            categoria.setDescricao(categoriaEntrada.getDescricao());
-            repository.save(categoria);
+            Endereco endereco = buscandoEndereco.get();
+            endereco.setLogradouro(enderecoEntrada.getLogradouro());
+            endereco.setNumero(enderecoEntrada.getNumero());
+            endereco.setBairro(enderecoEntrada.getBairro());
+            endereco.setCidade(enderecoEntrada.getCidade());
+            repository.save(endereco);
             return new ResponseEntity<>(true, HttpStatus.OK);
         }
         return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
     }
 
 	public ResponseEntity<EnderecoResponseDto> pegarUm(Long id) {
-        Optional<Categoria> buscandoCategoria = repository.findById(id);
-        return buscandocategoria.map(Categoria -> new ResponseEntity<>(mapToDto(Categoria), HttpStatus.OK))
+        Optional<Endereco> buscandoEndereco = repository.findById(id);
+        return buscandoEndereco.map(endereco -> new ResponseEntity<>(mapToDto(endereco), HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
@@ -59,14 +54,14 @@ public class EnderecoService {
         return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
     }
 
-	public ResponseEntity<List<CategoriaResponseDto>> listar() {
-        List<Categoria> listaCategorias = repository.findAll();
-        List<CategoriaResponseDto> listaSaida = listaCategorias.stream().map(this::mapToDto).collect(Collectors.toList());
+	public ResponseEntity<List<EnderecoResponseDto>> listar() {
+        List<Endereco> listaEnderecos = repository.findAll();
+        List<EnderecoResponseDto> listaSaida = listaEnderecos.stream().map(this::mapToDto).collect(Collectors.toList());
         return new ResponseEntity<>(listaSaida, HttpStatus.OK);
     }
 
-	private CategoriaResponseDto mapToDto(Categoria Categoria) {
-        return new CategoriaResponseDto(Categoria.getId(), Categoria.getNome(), Categoria.getDescricao());
+	private EnderecoResponseDto mapToDto(Endereco endereco) {
+        return new EnderecoResponseDto(endereco.getId(), endereco.getLogradouro(), endereco.getNumero(), endereco.getBairro(), endereco.getCidade());
     }
 
 }

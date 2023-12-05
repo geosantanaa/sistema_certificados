@@ -1,14 +1,6 @@
-package com.projeto.model.dto;
+package com.projeto.certificado.models.dto;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.projeto.certificado.models.Endereco;
 
 import lombok.Getter;
 import lombok.Setter;

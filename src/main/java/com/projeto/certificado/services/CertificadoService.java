@@ -1,4 +1,4 @@
-package com.example.curiculos.service;
+package com.projeto.certificado.services;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,16 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.example.curiculos.model.Curriculo;
-import com.example.curiculos.model.dto.CurriculoEntradaDto;
-import com.example.curiculos.model.dto.CurriculoSaidaDto;
-import com.example.curiculos.repository.CurriculoRepository;
-import com.projeto.certificado.models.Certificado;
+import com.projeto.certificado.models.Aluno;
 import com.projeto.certificado.models.Certificado;
 import com.projeto.certificado.models.dto.CertificadoRequestDto;
 import com.projeto.certificado.models.dto.CertificadoResponseDto;
-import com.projeto.certificado.models.dto.CertificadoRequestDto;
-import com.projeto.certificado.repositorys.CertificadoRepository;
+import com.projeto.certificado.repositorys.AlunoRepository;
 import com.projeto.certificado.repositorys.CertificadoRepository;
 
 @org.springframework.stereotype.Service
@@ -26,6 +21,8 @@ public class CertificadoService {
 	@Autowired
 	private CertificadoRepository repository;
 
+    @Autowired
+	private AlunoRepository alunoRepository;
 
 	public ResponseEntity<CertificadoResponseDto> criar(CertificadoRequestDto certificadoEntrada) {
         Certificado certificado = new Certificado(certificadoEntrada.getTitulo(), certificadoEntrada.getDescricao(), certificadoEntrada.getDataEmissao(), certificadoEntrada.getCategoria());
@@ -33,19 +30,39 @@ public class CertificadoService {
         return new ResponseEntity<>(mapToDto(certificado), HttpStatus.CREATED);
     }
 
-	public ResponseEntity<Boolean> alterar(Long id, CertificadoRequestDto certificadoEntrada) {
+    public ResponseEntity<Boolean> alterarCertificado(Long id, CertificadoRequestDto certificadoEntrada) {
         Optional<Certificado> buscandoCertificado = repository.findById(id);
+    
         if (buscandoCertificado.isPresent()) {
             Certificado certificado = buscandoCertificado.get();
-            certificado.setTitulo(certificadoEntrada.getTitulo());
-            certificado.setDescricao(certificadoEntrada.getDescricao());
-            certificadoEntrada.setDataEmissao(certificadoEntrada.getDataEmissao());
-            certificadoEntrada.setCategoria(certificadoEntrada.getCategoria());
-            repository.save(certificado);
-            return new ResponseEntity<>(true, HttpStatus.OK);
+    
+            Long alunoId = certificadoEntrada.getAlunoId();
+    
+            Optional<Aluno> alunoOptional = alunoRepository.findById(alunoId);
+    
+            if (alunoOptional.isPresent()) {
+                Aluno aluno = alunoOptional.get();
+    
+                certificado.setTitulo(certificadoEntrada.getTitulo());
+                certificado.setDescricao(certificadoEntrada.getDescricao());
+                certificado.setDataEmissao(certificadoEntrada.getDataEmissao());
+                certificado.setCategoria(certificadoEntrada.getCategoria());
+    
+                aluno.setCertificado(certificado);
+    
+                repository.save(certificado);
+                alunoRepository.save(aluno);
+    
+                return new ResponseEntity<>(true, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+            }
         }
+    
         return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
     }
+    
+        
 
 	public ResponseEntity<CertificadoResponseDto> pegarUm(Long id) {
         Optional<Certificado> buscandoCertificado = repository.findById(id);
@@ -68,7 +85,7 @@ public class CertificadoService {
     }
 
 	private CertificadoResponseDto mapToDto(Certificado certificado) {
-        return new CertificadoResponseDto(certificado.getId(), certificado.getNome(), certificado.getDescricao(), certificado.getDataEmissao(), certificado.getCategoria());
+        return new CertificadoResponseDto(certificado.getId(), certificado.getTitulo(), certificado.getDescricao(), certificado.getDataEmissao(), certificado.getCategoria());
     }
 
 }

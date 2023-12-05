@@ -3,6 +3,7 @@ package com.projeto.certificado.models.dto;
 import java.time.LocalDate;
 
 import com.projeto.certificado.models.Categoria;
+import com.projeto.certificado.models.Instituicao;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,20 +12,16 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class CertificadoRequestDto {
+public class CertificadoResponseDto {
 	
+    private Long id;
 	private String titulo;
 	private String descricao;
 	private LocalDate dataEmissao;
-    private Long categoriaId;
-    private Long instituicaoId;
-	
-    public Long getAlunoId() {
-        return null;
+    private Categoria categoria;
+    private Instituicao instituicao;
+    
+      public CertificadoResponseDto(Long id, String titulo, String descricao, LocalDate dataEmissao, Categoria categoria2) {
     }
-
-    public Categoria getCategoria() {
-        return null;
-    }	
 	
 }

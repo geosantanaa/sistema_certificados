@@ -7,9 +7,10 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class AdminRequestDto {
+public class TurmaResponseDto {
 	
-	private String nome;
-	private String email;
+    private Long id;
+    private String codigo;
+	private String status;
 	
 }

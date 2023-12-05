@@ -1,19 +1,12 @@
 package com.projeto.certificado.models;
 
 import java.time.LocalDate;
-import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -22,10 +15,9 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity(name = "curso")
-@Table
 public class Curso {
 
-	@Id
+    @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
@@ -40,5 +32,9 @@ public class Curso {
 
 	@Column(nullable = true, unique = true, length = 14)
 	private String professor;
+
+	public Curso(String nome, LocalDate dataInicio, LocalDate dataFinal, String professor) {
+    }
+
 
 }

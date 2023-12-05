@@ -1,4 +1,4 @@
-package com.example.curiculos.service;
+package com.projeto.certificado.services;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,14 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.example.curiculos.model.Curriculo;
-import com.example.curiculos.model.dto.CurriculoEntradaDto;
-import com.example.curiculos.model.dto.CurriculoSaidaDto;
-import com.example.curiculos.repository.CurriculoRepository;
-import com.projeto.certificado.models.Admin;
-import com.projeto.certificado.models.dto.AdminRequestDto;
-import com.projeto.certificado.models.dto.AdminResponseDto;
-import com.projeto.certificado.repositorys.AdminRepository;
+import com.projeto.certificado.models.Aluno;
+import com.projeto.certificado.models.Certificado;
+import com.projeto.certificado.models.Curso;
+import com.projeto.certificado.models.Turma;
+import com.projeto.certificado.models.dto.AlunoRequestDto;
+import com.projeto.certificado.models.dto.AlunoResponseDto;
+import com.projeto.certificado.repositorys.AlunoRepository;
+import com.projeto.certificado.repositorys.CertificadoRepository;
+import com.projeto.certificado.repositorys.CursoRepository;
+import com.projeto.certificado.repositorys.TurmaRepository;
 
 @org.springframework.stereotype.Service
 public class AlunoService {
@@ -23,27 +25,56 @@ public class AlunoService {
 	@Autowired
 	private AlunoRepository repository;
 
+    @Autowired
+	private TurmaRepository turmaRepository;
+
+    @Autowired
+	private CursoRepository cursoRepository;
+
+    @Autowired
+	private CertificadoRepository certificadoRepository;
+
 
 	public ResponseEntity<AlunoResponseDto> criar(AlunoRequestDto alunoEntrada) {
-        Aluno aluno = new Aluno(alunoEntrada.getNome(), alunoEntrada.getEmail(), alunoEntrada.getTurma(), alunoEntrada.getCurso(), alunoEntrada.getCertificado());
+        Aluno aluno = new Aluno(alunoEntrada.getNome(), alunoEntrada.getEmail(), alunoEntrada.getTurmaId(), alunoEntrada.getCursoId(), alunoEntrada.getCertificadoId());
         repository.save(aluno);
         return new ResponseEntity<>(mapToDto(aluno), HttpStatus.CREATED);
     }
 
 	public ResponseEntity<Boolean> alterar(Long id, AlunoRequestDto alunoEntrada) {
-        Optional<Aluno> buscandoAluno = repository.findById(id);
-        if (buscandoAluno.isPresent()) {
-            Aluno aluno = buscandoAluno.get();
-            aluno.setNome(alunoEntrada.getNome());
-            aluno.setEmail(alunoEntrada.getEmail());
-            aluno.setTurma(alunoEntrada.getTurma());
-            aluno.setCurso(alunoEntrada.getCurso());
-            aluno.setCertificado(alunoEntrada.getCertificado());
+    Optional<Aluno> buscandoAluno = repository.findById(id);
+
+    if (buscandoAluno.isPresent()) {
+        Aluno aluno = buscandoAluno.get();
+        aluno.setNome(alunoEntrada.getNome());
+        aluno.setEmail(alunoEntrada.getEmail());
+
+        Optional<Turma> turmaOptional = turmaRepository.findById(alunoEntrada.getTurmaId());
+
+        Optional<Curso> cursoOptional = cursoRepository.findById(alunoEntrada.getCursoId());
+
+        Optional<Certificado> certificadoOptional = certificadoRepository.findById(alunoEntrada.getCertificadoId());
+
+        if (turmaOptional.isPresent() && cursoOptional.isPresent() && certificadoOptional.isPresent()) {
+            Turma turma = turmaOptional.get();
+            Curso curso = cursoOptional.get();
+            Certificado certificado = certificadoOptional.get();
+
+            aluno.setTurma(turma);
+            aluno.setCurso(curso);
+            aluno.setCertificado(certificado);
+
             repository.save(aluno);
+
             return new ResponseEntity<>(true, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
     }
+
+    return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+}
+
 
 	public ResponseEntity<AlunoResponseDto> pegarUm(Long id) {
         Optional<Aluno> buscandoAluno = repository.findById(id);

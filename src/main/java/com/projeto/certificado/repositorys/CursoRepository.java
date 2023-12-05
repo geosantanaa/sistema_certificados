@@ -1,8 +1,8 @@
-package com.projeto.certificado.models.Curso;
+package com.projeto.certificado.repositorys;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.curiculos.model.Curriculo;
+import com.projeto.certificado.models.Curso;
 
 public interface CursoRepository extends JpaRepository<Curso, Long>{
 	
