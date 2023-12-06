@@ -31,17 +31,28 @@ public class CategoriaService {
         return saida;
     }
 
-	public boolean alterar(Long id, CategoriaRequestDto categoriaEntrada) {
-        Optional<Categoria> buscandoCategoria = repository.findById(id);
-
-        if(buscandoCategoria.isPresent()){
-            Categoria categoria = buscandoCategoria.get();
-            mapper.map(categoriaEntrada, Categoria.class);
-            repository.save(categoria);
-            return true;
+    public boolean alterar(Long id, CategoriaRequestDto categoriaEntrada) {
+        if (id == null || id <= 0) {
+            return false;
         }
+    
+        Optional<Categoria> buscandoCategoria = repository.findById(id);
+    
+        if (buscandoCategoria.isPresent()) {
+            Categoria categoria = buscandoCategoria.get();
+            
+            try {
+                mapper.map(categoriaEntrada, categoria);
+                repository.save(categoria);
+                return true;
+            } catch (Exception ex) {
+                return false;
+            }
+        }
+    
         return false;
     }
+    
 
 	public CategoriaResponseDto pegarUm(Long id) {
         Optional<Categoria> buscandoCategoria = repository.findById(id);

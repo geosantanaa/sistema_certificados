@@ -33,15 +33,17 @@ public class AdminService {
 
 	public boolean alterar(Long id, AdminRequestDto adminEntrada) {
         Optional<Admin> buscandoAdmin = repository.findById(id);
+    
+        if (!buscandoAdmin.isPresent()) {
+            return false;
+        }
 
-        if(buscandoAdmin.isPresent()){
             Admin admin = buscandoAdmin.get();
-            mapper.map(adminEntrada, Admin.class);
+            mapper.map(adminEntrada, admin);
             repository.save(admin);
             return true;
         }
-        return false;
-    }
+    
 
 	public AdminResponseDto pegarUm(Long id) {
         Optional<Admin> buscandoAdmin = repository.findById(id);

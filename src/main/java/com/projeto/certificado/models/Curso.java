@@ -25,10 +25,10 @@ public class Curso {
 	@Column(nullable = false, length = 100)
 	private String nome;
 
-    @Column(name = "data_cadastro")
+    @Column(name = "data_Inicio")
 	private LocalDate dataInicio;
 
-    @Column(name = "data_cadastro")
+    @Column(name = "data_Final")
 	private LocalDate dataFinal;
 
 	@Column(nullable = true, unique = true, length = 14)

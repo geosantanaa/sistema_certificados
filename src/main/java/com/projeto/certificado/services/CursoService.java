@@ -31,17 +31,27 @@ public class CursoService {
         return saida;
     }
 
-	public boolean alterar(Long id, CursoRequestDto cursoEntrada) {
-        Optional<Curso> buscandoCurso = repository.findById(id);
-
-        if(buscandoCurso.isPresent()){
-            Curso curso = buscandoCurso.get();
-            mapper.map(cursoEntrada, Curso.class);
-            repository.save(curso);
-            return true;
-        }
+public boolean alterar(Long id, CursoRequestDto cursoEntrada) {
+    if (id == null || id <= 0) {
         return false;
     }
+    Optional<Curso> buscandoCurso = repository.findById(id);
+
+    if (buscandoCurso.isPresent()) {
+        Curso curso = buscandoCurso.get();
+        
+        try {
+            mapper.map(cursoEntrada, curso);
+            repository.save(curso);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    return false;
+}
+
 
 	public CursoResponseDto pegarUm(Long id) {
         Optional<Curso> buscandoCurso = repository.findById(id);

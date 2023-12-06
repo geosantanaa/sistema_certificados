@@ -8,9 +8,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.projeto.certificado.models.Endereco;
 import com.projeto.certificado.models.Instituicao;
 import com.projeto.certificado.models.dto.InstituicaoRequestDto;
 import com.projeto.certificado.models.dto.InstituicaoResponseDto;
+import com.projeto.certificado.repositorys.EnderecoRepository;
 import com.projeto.certificado.repositorys.InstituicaoRepository;
 
 @Service
@@ -20,26 +22,45 @@ public class InstituicaoService {
 	private InstituicaoRepository repository;
 
     @Autowired
+	private EnderecoRepository enderecoRepository;
+
+    @Autowired
 	private ModelMapper mapper;
 
 
-	public InstituicaoResponseDto criar(InstituicaoRequestDto instituicaoEntrada) {
+	
+    public InstituicaoResponseDto criar(InstituicaoRequestDto instituicaoEntrada) {
         Instituicao instituicao = mapper.map(instituicaoEntrada, Instituicao.class);
-        repository.save(instituicao);
 
-        InstituicaoResponseDto saida = mapper.map(instituicao, InstituicaoResponseDto.class);
-        return saida;
+        Optional<Endereco> buscandoEndereco = enderecoRepository.findById(instituicaoEntrada.getEnderecoId());
+        if(buscandoEndereco.isPresent()){
+            Endereco endereco = buscandoEndereco.get();
+            instituicao.setEndereco(endereco);
+        }
+
+        Instituicao saida = repository.save(instituicao);
+        return mapper.map(saida, InstituicaoResponseDto.class);
     }
 
 	public boolean alterar(Long id, InstituicaoRequestDto instituicaoEntrada) {
-        Optional<Instituicao> buscandoInstituicao = repository.findById(id);
-
-        if(buscandoInstituicao.isPresent()){
-            Instituicao instituicao = buscandoInstituicao.get();
-            mapper.map(instituicaoEntrada, Instituicao.class);
-            repository.save(instituicao);
-            return true;
+        if (id == null || id <= 0) {
+            return false;
         }
+    
+        Optional<Instituicao> buscandoInstituicao = repository.findById(id);
+    
+        if (buscandoInstituicao.isPresent()) {
+            Instituicao instituicao = buscandoInstituicao.get();
+            
+            try {
+                mapper.map(instituicaoEntrada, instituicao);
+                repository.save(instituicao);
+                return true;
+            } catch (Exception ex) {
+                return false;
+            }
+        }
+    
         return false;
     }
 

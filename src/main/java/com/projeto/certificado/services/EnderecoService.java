@@ -31,18 +31,6 @@ public class EnderecoService {
         return saida;
     }
 
-	public boolean alterar(Long id, EnderecoRequestDto enderecoEntrada) {
-        Optional<Endereco> buscandoEndereco = repository.findById(id);
-
-        if(buscandoEndereco.isPresent()){
-            Endereco endereco = buscandoEndereco.get();
-            mapper.map(enderecoEntrada, Endereco.class);
-            repository.save(endereco);
-            return true;
-        }
-        return false;
-    }
-
 	public EnderecoResponseDto pegarUm(Long id) {
         Optional<Endereco> buscandoEndereco = repository.findById(id);
 

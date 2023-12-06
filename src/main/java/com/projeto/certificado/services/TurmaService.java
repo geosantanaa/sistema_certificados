@@ -1,7 +1,6 @@
 package com.projeto.certificado.services;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -29,29 +28,6 @@ public class TurmaService {
 
         TurmaResponseDto saida = mapper.map(turma, TurmaResponseDto.class);
         return saida;
-    }
-
-	public boolean alterar(Long id, TurmaRequestDto turmaEntrada) {
-        Optional<Turma> buscandoTurma = repository.findById(id);
-
-        if(buscandoTurma.isPresent()){
-            Turma turma = buscandoTurma.get();
-            mapper.map(turmaEntrada, Turma.class);
-            repository.save(turma);
-            return true;
-        }
-        return false;
-    }
-
-	public TurmaResponseDto pegarUm(Long id) {
-        Optional<Turma> buscandoTurma = repository.findById(id);
-
-        if(buscandoTurma.isPresent()){
-            Turma turma = buscandoTurma.get();
-            TurmaResponseDto saida = mapper.map(turma, TurmaResponseDto.class);
-            return saida;
-        }
-        return null;
     }
 
 	public boolean excluir(Long id) {

@@ -8,10 +8,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.projeto.certificado.models.Categoria;
 import com.projeto.certificado.models.Certificado;
+import com.projeto.certificado.models.Instituicao;
 import com.projeto.certificado.models.dto.CertificadoRequestDto;
 import com.projeto.certificado.models.dto.CertificadoResponseDto;
+import com.projeto.certificado.repositorys.CategoriaRepository;
 import com.projeto.certificado.repositorys.CertificadoRepository;
+import com.projeto.certificado.repositorys.InstituicaoRepository;
 
 @Service
 public class CertificadoService {
@@ -20,16 +24,35 @@ public class CertificadoService {
 	private CertificadoRepository repository;
 
     @Autowired
+	private CategoriaRepository categoriaRepository;
+
+    @Autowired
+	private InstituicaoRepository instituicaoRepository;
+
+    @Autowired
 	private ModelMapper mapper;
 
 
-	public CertificadoResponseDto criar(CertificadoRequestDto certificadoEntrada) {
+    public CertificadoResponseDto criar(CertificadoRequestDto certificadoEntrada) {
         Certificado certificado = mapper.map(certificadoEntrada, Certificado.class);
-        repository.save(certificado);
+        Optional<Categoria> buscandoCategoria = categoriaRepository.findById(certificadoEntrada.getCategoriaId());
+        if (buscandoCategoria.isPresent()) {
+            Categoria categoria = buscandoCategoria.get();
+            certificado.setCategoria(categoria);
 
-        CertificadoResponseDto saida = mapper.map(certificado, CertificadoResponseDto.class);
-        return saida;
+        }
+    
+        Optional<Instituicao> buscandoInstituicao = instituicaoRepository.findById(certificadoEntrada.getInstituicaoId());
+        if (buscandoInstituicao.isPresent()) {
+            Instituicao instituicao = buscandoInstituicao.get();
+            certificado.setInstituicao(instituicao);
+        }
+    
+        Certificado saida = repository.save(certificado);
+        return mapper.map(saida, CertificadoResponseDto.class);
     }
+    
+    
 
 	public boolean alterar(Long id, CertificadoRequestDto certificadoEntrada) {
         Optional<Certificado> buscandoCertificado = repository.findById(id);
