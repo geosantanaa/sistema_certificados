@@ -2,11 +2,12 @@ package com.projeto.certificado.models;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -32,9 +33,4 @@ public class Curso {
 
 	@Column(nullable = true, unique = true, length = 14)
 	private String professor;
-
-	public Curso(String nome, LocalDate dataInicio, LocalDate dataFinal, String professor) {
-    }
-
-
 }

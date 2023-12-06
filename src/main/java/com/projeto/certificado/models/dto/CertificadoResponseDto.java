@@ -15,13 +15,11 @@ import lombok.ToString;
 public class CertificadoResponseDto {
 	
     private Long id;
-	private String titulo;
-	private String descricao;
-	private LocalDate dataEmissao;
+	 private String titulo;
+	 private String descricao;
+	 private LocalDate dataEmissao;
     private Categoria categoria;
     private Instituicao instituicao;
-    
-      public CertificadoResponseDto(Long id, String titulo, String descricao, LocalDate dataEmissao, Categoria categoria2) {
-    }
+
 	
 }

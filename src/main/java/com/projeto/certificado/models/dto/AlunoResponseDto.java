@@ -19,15 +19,5 @@ public class AlunoResponseDto {
     private Turma turma;
     private Curso curso;
     private Certificado certificado;
-
-    public AlunoResponseDto(Long id, String nome, String email, Turma turma, Curso curso, Certificado certificado) {
-        id = this.id;
-        nome = this.nome;
-        email = this.email;
-        turma = this.turma;
-        curso = this.curso;
-        certificado = this.certificado;
-
-    }
 	
 }

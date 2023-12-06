@@ -4,88 +4,67 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
-import com.projeto.certificado.models.Aluno;
 import com.projeto.certificado.models.Certificado;
 import com.projeto.certificado.models.dto.CertificadoRequestDto;
 import com.projeto.certificado.models.dto.CertificadoResponseDto;
-import com.projeto.certificado.repositorys.AlunoRepository;
 import com.projeto.certificado.repositorys.CertificadoRepository;
 
-@org.springframework.stereotype.Service
+@Service
 public class CertificadoService {
 
 	@Autowired
 	private CertificadoRepository repository;
 
     @Autowired
-	private AlunoRepository alunoRepository;
+	private ModelMapper mapper;
 
-	public ResponseEntity<CertificadoResponseDto> criar(CertificadoRequestDto certificadoEntrada) {
-        Certificado certificado = new Certificado(certificadoEntrada.getTitulo(), certificadoEntrada.getDescricao(), certificadoEntrada.getDataEmissao(), certificadoEntrada.getCategoria());
+
+	public CertificadoResponseDto criar(CertificadoRequestDto certificadoEntrada) {
+        Certificado certificado = mapper.map(certificadoEntrada, Certificado.class);
         repository.save(certificado);
-        return new ResponseEntity<>(mapToDto(certificado), HttpStatus.CREATED);
+
+        CertificadoResponseDto saida = mapper.map(certificado, CertificadoResponseDto.class);
+        return saida;
     }
 
-    public ResponseEntity<Boolean> alterarCertificado(Long id, CertificadoRequestDto certificadoEntrada) {
+	public boolean alterar(Long id, CertificadoRequestDto certificadoEntrada) {
         Optional<Certificado> buscandoCertificado = repository.findById(id);
-    
-        if (buscandoCertificado.isPresent()) {
+
+        if(buscandoCertificado.isPresent()){
             Certificado certificado = buscandoCertificado.get();
-    
-            Long alunoId = certificadoEntrada.getAlunoId();
-    
-            Optional<Aluno> alunoOptional = alunoRepository.findById(alunoId);
-    
-            if (alunoOptional.isPresent()) {
-                Aluno aluno = alunoOptional.get();
-    
-                certificado.setTitulo(certificadoEntrada.getTitulo());
-                certificado.setDescricao(certificadoEntrada.getDescricao());
-                certificado.setDataEmissao(certificadoEntrada.getDataEmissao());
-                certificado.setCategoria(certificadoEntrada.getCategoria());
-    
-                aluno.setCertificado(certificado);
-    
-                repository.save(certificado);
-                alunoRepository.save(aluno);
-    
-                return new ResponseEntity<>(true, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
-            }
+            mapper.map(certificadoEntrada, Certificado.class);
+            repository.save(certificado);
+            return true;
         }
-    
-        return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        return false;
     }
-    
-        
 
-	public ResponseEntity<CertificadoResponseDto> pegarUm(Long id) {
+	public CertificadoResponseDto pegarUm(Long id) {
         Optional<Certificado> buscandoCertificado = repository.findById(id);
-        return buscandoCertificado.map(certificado -> new ResponseEntity<>(mapToDto(certificado), HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+        if(buscandoCertificado.isPresent()){
+            Certificado certificado = buscandoCertificado.get();
+            CertificadoResponseDto saida = mapper.map(certificado, CertificadoResponseDto.class);
+            return saida;
+        }
+        return null;
     }
 
-	public ResponseEntity<Boolean> excluir(Long id) {
+	public boolean excluir(Long id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
-            return new ResponseEntity<>(true, HttpStatus.OK);
+            return true;
         }
-        return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        return false;
     }
 
-	public ResponseEntity<List<CertificadoResponseDto>> listar() {
+	public List<CertificadoResponseDto> listar() {
         List<Certificado> listaCertificados = repository.findAll();
-        List<CertificadoResponseDto> listaSaida = listaCertificados.stream().map(this::mapToDto).collect(Collectors.toList());
-        return new ResponseEntity<>(listaSaida, HttpStatus.OK);
-    }
-
-	private CertificadoResponseDto mapToDto(Certificado certificado) {
-        return new CertificadoResponseDto(certificado.getId(), certificado.getTitulo(), certificado.getDescricao(), certificado.getDataEmissao(), certificado.getCategoria());
+        return listaCertificados.stream().map(certificado -> mapper.map(certificado, CertificadoResponseDto.class)).collect(Collectors.toList());
     }
 
 }

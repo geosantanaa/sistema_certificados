@@ -16,8 +16,5 @@ public class CursoResponseDto {
 	private LocalDate dataInicio;
 	private LocalDate dataFinal;
 	private String professor;	
-
-	  public CursoResponseDto(Long id, String nome, LocalDate dataInicio, LocalDate dataFinal, String professor) {
-	}
 	
 }

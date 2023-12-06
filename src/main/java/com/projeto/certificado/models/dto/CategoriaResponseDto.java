@@ -12,8 +12,5 @@ public class CategoriaResponseDto {
     private Long id;
 	private String nome;
 	private String descricao;	
-
-    public CategoriaResponseDto(Long id, String nome, String descricao) {
-    }
 	
 }

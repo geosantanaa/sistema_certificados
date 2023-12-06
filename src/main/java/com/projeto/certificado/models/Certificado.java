@@ -2,13 +2,14 @@ package com.projeto.certificado.models;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -40,10 +41,5 @@ public class Certificado {
     @JoinColumn(name = "instituicaoId")
     private Instituicao instituicao;
 	
-	public Certificado(String titulo, String descricao, LocalDate dataEmissao, Long categoria) {
-    }
-
-    public Certificado(String titulo2, String descricao2, LocalDate dataEmissao2, Categoria categoria2) {
-    }
 
 }

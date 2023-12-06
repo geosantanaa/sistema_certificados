@@ -14,9 +14,6 @@ public class EnderecoResponseDto {
 	private String numero;
 	private String bairro;
 	private String cidade;
-	
-	
-    public EnderecoResponseDto(Long id, String logradouro, String numero, String bairro, String cidade) {
-    }
+
 	
 }

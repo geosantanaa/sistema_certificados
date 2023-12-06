@@ -4,62 +4,67 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.projeto.certificado.models.Categoria;
 import com.projeto.certificado.models.dto.CategoriaRequestDto;
 import com.projeto.certificado.models.dto.CategoriaResponseDto;
 import com.projeto.certificado.repositorys.CategoriaRepository;
 
-@org.springframework.stereotype.Service
+@Service
 public class CategoriaService {
 
 	@Autowired
 	private CategoriaRepository repository;
 
+    @Autowired
+	private ModelMapper mapper;
 
-	public ResponseEntity<CategoriaResponseDto> criar(CategoriaRequestDto categoriaEntrada) {
-        Categoria categoria = new Categoria(categoriaEntrada.getNome(), categoriaEntrada.getDescricao());
+
+	public CategoriaResponseDto criar(CategoriaRequestDto categoriaEntrada) {
+        Categoria categoria = mapper.map(categoriaEntrada, Categoria.class);
         repository.save(categoria);
-        return new ResponseEntity<>(mapToDto(categoria), HttpStatus.CREATED);
+
+        CategoriaResponseDto saida = mapper.map(categoria, CategoriaResponseDto.class);
+        return saida;
     }
 
-	public ResponseEntity<Boolean> alterar(Long id, CategoriaRequestDto categoriaEntrada) {
+	public boolean alterar(Long id, CategoriaRequestDto categoriaEntrada) {
         Optional<Categoria> buscandoCategoria = repository.findById(id);
-        if (buscandoCategoria.isPresent()) {
+
+        if(buscandoCategoria.isPresent()){
             Categoria categoria = buscandoCategoria.get();
-            categoria.setNome(categoriaEntrada.getNome());
-            categoria.setDescricao(categoriaEntrada.getDescricao());
+            mapper.map(categoriaEntrada, Categoria.class);
             repository.save(categoria);
-            return new ResponseEntity<>(true, HttpStatus.OK);
+            return true;
         }
-        return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        return false;
     }
 
-	public ResponseEntity<CategoriaResponseDto> pegarUm(Long id) {
+	public CategoriaResponseDto pegarUm(Long id) {
         Optional<Categoria> buscandoCategoria = repository.findById(id);
-        return buscandoCategoria.map(categoria -> new ResponseEntity<>(mapToDto(categoria), HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+        if(buscandoCategoria.isPresent()){
+            Categoria categoria = buscandoCategoria.get();
+            CategoriaResponseDto saida = mapper.map(categoria, CategoriaResponseDto.class);
+            return saida;
+        }
+        return null;
     }
 
-	public ResponseEntity<Boolean> excluir(Long id) {
+	public boolean excluir(Long id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
-            return new ResponseEntity<>(true, HttpStatus.OK);
+            return true;
         }
-        return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        return false;
     }
 
-	public ResponseEntity<List<CategoriaResponseDto>> listar() {
+	public List<CategoriaResponseDto> listar() {
         List<Categoria> listaCategorias = repository.findAll();
-        List<CategoriaResponseDto> listaSaida = listaCategorias.stream().map(this::mapToDto).collect(Collectors.toList());
-        return new ResponseEntity<>(listaSaida, HttpStatus.OK);
-    }
-
-	private CategoriaResponseDto mapToDto(Categoria categoria) {
-        return new CategoriaResponseDto(categoria.getId(), categoria.getNome(), categoria.getDescricao());
+        return listaCategorias.stream().map(categoria -> mapper.map(categoria, CategoriaResponseDto.class)).collect(Collectors.toList());
     }
 
 }

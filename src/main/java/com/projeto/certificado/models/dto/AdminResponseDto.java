@@ -13,10 +13,5 @@ public class AdminResponseDto {
 	private String nome;
 	private String email;
 
-	 public AdminResponseDto(Long id, String nome, String email) {
-		id = this.id;
-		nome = this.nome;
-		email = this.email;
-    }
 	
 }
