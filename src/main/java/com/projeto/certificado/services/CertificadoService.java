@@ -55,14 +55,24 @@ public class CertificadoService {
     
 
 	public boolean alterar(Long id, CertificadoRequestDto certificadoEntrada) {
-        Optional<Certificado> buscandoCertificado = repository.findById(id);
-
-        if(buscandoCertificado.isPresent()){
-            Certificado certificado = buscandoCertificado.get();
-            mapper.map(certificadoEntrada, Certificado.class);
-            repository.save(certificado);
-            return true;
+        if (id == null || id <= 0) {
+            return false;
         }
+    
+        Optional<Certificado> buscandoCertificado = repository.findById(id);
+    
+        if (buscandoCertificado.isPresent()) {
+            Certificado certificado = buscandoCertificado.get();
+            
+            try {
+                mapper.map(certificadoEntrada, certificado);
+                repository.save(certificado);
+                return true;
+            } catch (Exception ex) {
+                return false;
+            }
+        }
+    
         return false;
     }
 

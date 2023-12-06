@@ -64,14 +64,24 @@ public class AlunoService {
     }
 
 	public boolean alterar(Long id, AlunoRequestDto alunoEntrada) {
-        Optional<Aluno> buscandoAluno = repository.findById(id);
-
-        if(buscandoAluno.isPresent()){
-            Aluno aluno = buscandoAluno.get();
-            mapper.map(alunoEntrada, Aluno.class);
-            repository.save(aluno);
-            return true;
+        if (id == null || id <= 0) {
+            return false;
         }
+    
+        Optional<Aluno> buscandoAluno = repository.findById(id);
+    
+        if (buscandoAluno.isPresent()) {
+            Aluno aluno = buscandoAluno.get();
+            
+            try {
+                mapper.map(alunoEntrada, aluno);
+                repository.save(aluno);
+                return true;
+            } catch (Exception ex) {
+                return false;
+            }
+        }
+    
         return false;
     }
 
